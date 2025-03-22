@@ -31,3 +31,13 @@ java {
 ```
 jdk 11로 조정
 ```
+
+## batch작업 후 데이터를 이관할 테이블 생성 : BATCH_OUTPUT_JOB_MST
+```
+CREATE TABLE BATCH_OUTPUT_JOB_MST LIKE job_mst;
+```
+
+## Spring batch관련, BATCH_JOB_INSTANCE 테이블 생성
+```
+spring.batch.initialize-schema=always
+```
