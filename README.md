@@ -13,7 +13,7 @@
 
 
 
-## Gradle 설정 파일 버전맞추기
+## 버전맞추기 (build.gradle파일)
 ```
 id 'org.springframework.boot' version '3.5.0' --> id 'org.springframework.boot' version '2.6.4'로 변경
 id 'io.spring.dependency-management' version '1.1.4' 추가
@@ -37,7 +37,7 @@ jdk 11로 조정
 CREATE TABLE BATCH_OUTPUT_JOB_MST LIKE job_mst;
 ```
 
-## Spring batch관련, BATCH_JOB_INSTANCE 테이블 생성
+## Spring batch관련, BATCH_JOB_INSTANCE 테이블 생성 (application.properties)
 ```
 spring.batch.initialize-schema=always
 ```
