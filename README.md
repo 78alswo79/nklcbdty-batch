@@ -13,7 +13,7 @@
 
 
 
-## 버전맞추기 (build.gradle파일)
+## build.gradle
 ```
 id 'org.springframework.boot' version '3.5.0' --> id 'org.springframework.boot' version '2.6.4'로 변경
 id 'io.spring.dependency-management' version '1.1.4' 추가
@@ -37,7 +37,12 @@ jdk 11로 조정
 CREATE TABLE BATCH_OUTPUT_JOB_MST LIKE job_mst;
 ```
 
-## Spring batch관련, BATCH_JOB_INSTANCE 테이블 생성 (application.properties)
+## application.properties. BATCH_JOB_INSTANCE 테이블 생성
 ```
 spring.batch.initialize-schema=always
+```
+
+## BatchJobSchedule.java 스케줄러 테스트
+```
+@Scheduled(cron = "*/30 * * * * ?") : 30초마다 실행
 ```
