@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 @EnableScheduling
 public class BatchJobSchedule {
 	private final JobLauncher jobLauncher;
-    private final BatchConfiguration batchConfiguration;
+    private final BatchConfiguration2 batchConfiguration2;
 
-    public BatchJobSchedule(JobLauncher jobLauncher, BatchConfiguration batchConfiguration) {
+    public BatchJobSchedule(JobLauncher jobLauncher, BatchConfiguration2 batchConfiguration2) {
         this.jobLauncher = jobLauncher;
-        this.batchConfiguration = batchConfiguration;
+        this.batchConfiguration2 = batchConfiguration2;
     }
 
     @Scheduled(cron = "* * 18 * * ?") // 매일 오후 3시
@@ -29,7 +29,7 @@ public class BatchJobSchedule {
     				.addString("param", "value")
     				.addLong("time", System.currentTimeMillis()) // 현재 시간 추가
     				.toJobParameters();
-    		jobLauncher.run(batchConfiguration.testBatch(), jobParameters);
+    		jobLauncher.run(batchConfiguration2.testBatch2(), jobParameters);
     	} catch(JobExecutionAlreadyRunningException e) {
     		 e.printStackTrace();
     	} catch (JobParametersInvalidException e) {
