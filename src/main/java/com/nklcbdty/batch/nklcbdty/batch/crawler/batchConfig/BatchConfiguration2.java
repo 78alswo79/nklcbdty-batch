@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,6 +16,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.BatchJobMstRepository;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobMstRepository;
@@ -61,6 +64,13 @@ public class BatchConfiguration2 {
     private final DaangnJobCrawlerService daangnJobCrawlerService;
     
     @Bean
+    public TaskExecutor taskExecutor() {
+        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+        executor.setConcurrencyLimit(8); 			// 동시 실행할 스레드 수 설정
+        return executor;
+    }
+    
+    @Bean
     public Job testBatch2() {
         // Job을 정의하고 구성
         return jobBuilderFactory.get("testBatch2") // Job 이름 설정
@@ -75,18 +85,25 @@ public class BatchConfiguration2 {
     public Step crawlerStep() {
 		// Step을 정의하고 구성
 	    return stepBuilderFactory.get("crawlerStep") // Step 이름 설정
-	    			.tasklet((contribution, chunkContext) -> {
-	    				naverJobCrawlerService.crawlJobs();
-	                    kakaoCrawlerService.crawlJobs();   
-	                    lineJobCrawlerService.crawlJobs();
-	                	coupangJobCrawlerService.crawlJobs();
-	                	baeminJobCrawlerService.crawlJobs();
-	                	daangnJobCrawlerService.crawlJobs();
-	                    tossJobCrawlerService.crawlJobs();
-	                    yanoljaCralwerService.crawlJobs();
-	    				return RepeatStatus.FINISHED; // Tasklet이 완료되었음을 나타냄
-	    			})
-	    			.build(); // Step 빌드
+	    		.tasklet((contribution, chunkContext) -> {
+	                // 각 크롤러를 병렬로 실행
+	                CompletableFuture<Void> naverFuture = CompletableFuture.runAsync(() -> naverJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> kakaoFuture = CompletableFuture.runAsync(() -> kakaoCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> lineFuture = CompletableFuture.runAsync(() -> lineJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> coupangFuture = CompletableFuture.runAsync(() -> coupangJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> baeminFuture = CompletableFuture.runAsync(() -> baeminJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> daangnFuture = CompletableFuture.runAsync(() -> daangnJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> tossFuture = CompletableFuture.runAsync(() -> tossJobCrawlerService.crawlJobs(), taskExecutor());
+	                CompletableFuture<Void> yanoljaFuture = CompletableFuture.runAsync(() -> yanoljaCralwerService.crawlJobs(), taskExecutor());
+
+	                // 모든 작업이 완료될 때까지 대기
+	                CompletableFuture<Void> allOf = CompletableFuture.allOf(naverFuture, kakaoFuture, lineFuture, coupangFuture, baeminFuture, daangnFuture, tossFuture, yanoljaFuture);
+	                allOf.join(); // 모든 작업이 완료될 때까지 대기
+
+	                return RepeatStatus.FINISHED;
+	            })
+	            .taskExecutor(taskExecutor()) // TaskExecutor 설정
+    			.build(); // Step 빌드
 	}
     
     
