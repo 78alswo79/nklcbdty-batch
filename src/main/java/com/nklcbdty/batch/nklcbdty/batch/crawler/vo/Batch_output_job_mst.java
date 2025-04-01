@@ -14,7 +14,7 @@ import lombok.Data;
 @Entity
 @Table(name = "batch_output_job_mst")
 @Data
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Batch_output_job_mst {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
