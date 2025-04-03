@@ -11,15 +11,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Component
 @EnableScheduling
 public class BatchJobSchedule {
 	private final JobLauncher jobLauncher;
-    private final BatchConfiguration2 batchConfiguration2;
-
-    public BatchJobSchedule(JobLauncher jobLauncher, BatchConfiguration2 batchConfiguration2) {
+//     private final BatchConfiguration2 batchConfiguration2;					 	// 각 크롤러 병렬처리한 배치 잡
+    private final BatchConfiguration3 batchConfiguration3;
+    
+    public BatchJobSchedule(JobLauncher jobLauncher, BatchConfiguration3 batchConfiguration3) {
         this.jobLauncher = jobLauncher;
-        this.batchConfiguration2 = batchConfiguration2;
+        this.batchConfiguration3 = batchConfiguration3;
     }
 
     @Scheduled(cron = "* * 18 * * ?") // 매일 오후 3시
@@ -29,7 +32,8 @@ public class BatchJobSchedule {
     				.addString("param", "value")
     				.addLong("time", System.currentTimeMillis()) // 현재 시간 추가
     				.toJobParameters();
-    		jobLauncher.run(batchConfiguration2.testBatch2(), jobParameters);
+    		//jobLauncher.run(batchConfiguration2.testBatch2(), jobParameters); 	// 각 크롤러 병렬처리한 배치 잡
+    		jobLauncher.run(batchConfiguration3.testBatch3(), jobParameters);
     	} catch(JobExecutionAlreadyRunningException e) {
     		 e.printStackTrace();
     	} catch (JobParametersInvalidException e) {

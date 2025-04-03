@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.batchConfig.BatchConfiguration;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.service.BatchService;
 
 @RestController
