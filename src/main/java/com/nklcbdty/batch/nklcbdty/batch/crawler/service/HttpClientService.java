@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 @Service
+@Slf4j
 public class HttpClientService {
     private final OkHttpClient client = new OkHttpClient();
     private final List<String> whiteList = Arrays.asList(
@@ -32,7 +34,7 @@ public class HttpClientService {
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                 // 응답 처리
-                System.out.println(response.body().string());
+                log.info("httpClientService.callHttpClient() 통신 후 리스폰수>>>>>>>>>>>>>>>>>>>>{}" , response.body().string());
             } catch (IOException e) {
                 System.err.println("Error fetching data from: " + url + " - " + e.getMessage());
             }
