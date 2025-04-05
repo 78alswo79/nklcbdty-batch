@@ -1,13 +1,18 @@
 <configuration>
-	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>logs/myBatch.log</file>
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
-		</encoder>
-	</appender>
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/myBatch_%d{yyyy-MM-dd}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 로그 파일 이름 패턴 설정 -->
+            <fileNamePattern>logs/myBatch_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 보관할 로그 파일의 최대 개수 설정 (예: 30일치 보관) -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-
-	<root level="INFO">
-		<appender-ref ref="FILE" />
-	</root>
+    <root level="INFO">
+        <appender-ref ref="ROLLING" />
+    </root>
 </configuration>
