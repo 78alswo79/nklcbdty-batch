@@ -1,6 +1,6 @@
 <configuration>
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/myBatch_%d{yyyy-MM-dd}.log</file>
+        <file>logs/myBatch.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 로그 파일 이름 패턴 설정 -->
             <fileNamePattern>logs/myBatch_%d{yyyy-MM-dd}.log</fileNamePattern>
