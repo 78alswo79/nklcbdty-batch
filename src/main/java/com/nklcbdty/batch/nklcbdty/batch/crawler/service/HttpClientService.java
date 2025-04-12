@@ -34,7 +34,6 @@ public class HttpClientService {
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
                 // 응답 처리
-                log.info("httpClientService.callHttpClient() 통신 후 리스폰수>>>>>>>>>>>>>>>>>>>>{}" , response.body().string());
             } catch (IOException e) {
                 System.err.println("Error fetching data from: " + url + " - " + e.getMessage());
             }
