@@ -16,6 +16,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -68,8 +69,7 @@ public class FirstBatch {
 	// Job_mst Http통신요청부터 배치 시작!
     @Bean
     public Job requestCrawlerJob() {
-        return new JobBuilder("requestCrawlerJob")
-                .repository(jobRepository)
+        return new JobBuilder("requestCrawlerJob", jobRepository) // JobRepository를 생성자에 전달
                 .incrementer(new RunIdIncrementer())
                 .start(requestStep())
                 .build();
@@ -77,14 +77,13 @@ public class FirstBatch {
 
     @Bean
     public Step requestStep() {
-        return new StepBuilder("requestStep")
-                .repository(jobRepository)
-                .transactionManager(platformTransactionManager)
-                .<String, Response>chunk(1) // URL 하나씩 처리
-                .reader(urlReader())
-                .processor(httpRequestProcessor())
-                .writer(httpResponseWriter())
-                .build();
+        // StepBuilder 생성자에 JobRepository와 PlatformTransactionManager를 직접 넘겨줍니다.
+        return new StepBuilder("requestStep", jobRepository) // <-- 이 부분이 수정되었습니다!
+            .<String, Response>chunk(1, platformTransactionManager) // chunk 메서드에 transactionManager 전달
+            .reader(urlReader())
+            .processor(httpRequestProcessor())
+            .writer(httpResponseWriter())
+            .build();
     }
 
     @Bean
@@ -140,39 +139,38 @@ public class FirstBatch {
     public ItemWriter<Response> httpResponseWriter() {
         return new ItemWriter<Response>() {
             @Override
-            public void write(List<? extends Response> items) throws Exception {
-                for (Response response : items) {
+            public void write(Chunk<? extends Response> chunk) throws Exception {
+                for (Response response : chunk.getItems()) { // <-- 이 부분이 변경되었습니다!
                     // 응답을 처리하는 로직
                     // 예: 데이터베이스에 저장하거나 로그에 기록
-                	log.info("Response: {}", response);
-//                    System.out.println("Response: " + response);
+                    log.info("Response: {}", response);
                 }
             }
         };
     }
+
     ///////////////// requestCrawlerJob step여기까지.
     
     
 	
 	@Bean
 	public Job batchMstCRUDJob() {
-		return new JobBuilder("batchMstCRUDJob")
-				.repository(jobRepository)
-				//.incrementer(new RunIdIncrementer()) 					// RunIdIncrementer 추가
-				.start(batchMstDelete())
-				.next(firstStep())
-				.build();
+        return new JobBuilder("batchMstCRUDJob", jobRepository) // <-- 이 부분이 변경되었습니다!
+            // .repository(jobRepository) // 이 라인은 이제 필요 없습니다!
+            // .incrementer(new RunIdIncrementer()) // 필요하다면 주석 해제하여 사용
+            .start(batchMstDelete())
+            .next(firstStep())
+            .build();
 	}
 	
 	@Bean
 	public Step batchMstDelete() {
-		return new StepBuilder("batchMstDelete")
-				.repository(jobRepository)
-				.transactionManager(platformTransactionManager)			// 트랜잭션 매니저 설정
-				.<Batch_output_job_mst, Batch_output_job_mst> chunk(10)
-				.reader(bathchMstReader())
-                .writer(bathchMstWriter())
-                .build();	
+        return new StepBuilder("batchMstDelete", jobRepository) // <-- 이 부분이 변경되었습니다!
+            .<Batch_output_job_mst, Batch_output_job_mst> chunk(10, platformTransactionManager) // <-- chunk 메서드에 transactionManager 전달!
+            .reader(bathchMstReader())
+            .writer(bathchMstWriter())
+            .build();
+
 	}
 	
 	@Bean
@@ -188,27 +186,24 @@ public class FirstBatch {
 	
 	@Bean
     public ItemWriter<Batch_output_job_mst> bathchMstWriter() {
-    	return new ItemWriter<Batch_output_job_mst>() {
-
-			@Override
-			public void write(List<? extends Batch_output_job_mst> items) throws Exception {
-				// TODO Auto-generated method stub
-				 batchJobMstRepository.deleteAll();
-			}
-    	};
+        return new ItemWriter<Batch_output_job_mst>() {
+            @Override
+            public void write(Chunk<? extends Batch_output_job_mst> chunk) throws Exception {
+                batchJobMstRepository.deleteAll();
+            }
+        };
     }
 	
-	@Bean
-	public Step firstStep() {
-		return new StepBuilder("firstStep")
-				.repository(jobRepository)
-				.transactionManager(platformTransactionManager)			// 트랜잭션 매니저 설정
-				.<Job_mst, Batch_output_job_mst> chunk(10)
-				.reader(beforeReader())
-                .processor(middleProcessor())
-                .writer(afterWriter())
-                .build();	
-	}
+    @Bean
+    public Step firstStep() {
+        // StepBuilder 생성자에는 JobRepository만 넘겨줍니다.
+        return new StepBuilder("firstStep", jobRepository) // <-- 이 부분이 변경되었습니다!
+            .<Job_mst, Batch_output_job_mst> chunk(10, platformTransactionManager) // <-- chunk 메서드에 transactionManager 전달!
+            .reader(beforeReader())
+            .processor(middleProcessor())
+            .writer(afterWriter())
+            .build();
+    }
 	
 	
 	@Bean
