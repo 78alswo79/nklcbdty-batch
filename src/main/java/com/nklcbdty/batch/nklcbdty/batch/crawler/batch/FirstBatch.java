@@ -41,7 +41,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 @Configuration
-@EnableBatchProcessing
 @Slf4j
 public class FirstBatch {
 	private final JobRepository jobRepository;
@@ -220,7 +219,7 @@ public class FirstBatch {
 	@Bean
 	public ItemProcessor<Job_mst, Batch_output_job_mst> middleProcessor() {
 		// 중복된 annoId를 추적하기 위한 Set
-	    Set<Long> processedAnnoIds = new HashSet<>();
+	    Set<String> processedAnnoIds = new HashSet<>();
 	    
 		return new ItemProcessor<Job_mst, Batch_output_job_mst>() {	
 			@Override
