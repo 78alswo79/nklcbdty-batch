@@ -30,7 +30,7 @@ public class FirstSchedule {
 	@Autowired
 	private Job requestCrawlerJob;
 	
-	@Scheduled(cron = "* * 18 * * *", zone = "Asia/Seoul")
+	// @Scheduled(cron = "* * 18 * * *", zone = "Asia/Seoul")
 	public void runFirstJob() throws Exception {
 		
 		
