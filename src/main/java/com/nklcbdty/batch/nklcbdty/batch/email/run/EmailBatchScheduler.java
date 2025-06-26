@@ -21,7 +21,7 @@ public class EmailBatchScheduler {
      * cron = "초 분 시 일 월 요일"
      * "0 0 5 * * *" 의미: 매일 오전 5시 0분 0초
      */
-    @Scheduled(cron = "* * 8 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
     // @Scheduled(fixedDelay = 10000) // 10초마다 실행 (테스트용)
     public void runEmailBatchJob() {
         try {
