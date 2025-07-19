@@ -1,5 +1,10 @@
 package com.nklcbdty.batch.nklcbdty.batch.crawler.vo;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,4 +57,16 @@ public class Job_mst {
 
     @Column(nullable = true)
     private String endDate;
+
+    @Column(nullable = true)
+    private long personalHistory;
+
+    @Column(nullable = true)
+    private long personalHistoryEnd;
+
+    @CreationTimestamp
+    private LocalDateTime insertDts;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDts;
 }
