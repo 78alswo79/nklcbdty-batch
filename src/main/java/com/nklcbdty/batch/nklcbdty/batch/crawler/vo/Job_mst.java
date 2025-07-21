@@ -59,10 +59,10 @@ public class Job_mst {
     private String endDate;
 
     @Column(nullable = true)
-    private long personalHistory;
+    private Long personalHistory;
 
     @Column(nullable = true)
-    private long personalHistoryEnd;
+    private Long personalHistoryEnd;
 
     @CreationTimestamp
     private LocalDateTime insertDts;

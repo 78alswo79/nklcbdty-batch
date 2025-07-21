@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
 
 @Repository
-public interface JobRepositoryInterface extends JpaRepository<Job_mst, Long> {
+public interface JobRepositoryInterface extends JpaRepository<Job_mst, Long>, JobRepositoryCustom {
     List<Job_mst> findAllByCompanyCdAndSubJobCdNmIsNotNullOrderByEndDateAsc(String company);
     List<Job_mst> findAllBySubJobCdNmIsNotNull();
     List<Job_mst> findAllByCompanyCdInAndSubJobCdNmInOrderByEndDateDesc(List<String> companyCds, List<String> subJobCdNms);

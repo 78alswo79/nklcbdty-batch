@@ -163,8 +163,12 @@ public class EmailService {
             for (UserInterestVo job : jobs) {
                 jobStr.add(job.getItemValue());
             }
-            List<Job_mst> allByCompanyCdInAndSubJobCdNmIn
-                = jobRepositoryInterface.findAllByCompanyCdInAndSubJobCdNmInOrderByEndDateDesc(companysStr, jobStr);
+            List<Job_mst> allByCompanyCdInAndSubJobCdNmIn = jobRepositoryInterface.findJobsByDetailedCriteria(
+                companysStr,
+                jobStr,
+                2L, // 경력 시작일 (0L은 경력 무관)
+                0L  // 경력 종료일 (0L은 경력 무관)
+            );
             log.info("userId: {}, companys: {}, jobs: {}, allByCompanyCdInAndSubJobCdNmIn: {}", userId, companys, jobs, allByCompanyCdInAndSubJobCdNmIn.size());
             List<JobPosting> jobPostings = new ArrayList<>();
             for (Job_mst job : allByCompanyCdInAndSubJobCdNmIn) {
