@@ -163,10 +163,18 @@ public class EmailService {
             for (UserInterestVo job : jobs) {
                 jobStr.add(job.getItemValue());
             }
+            List<UserInterestVo> careerYear = userInterestRepository.findItemValueByUserIdAndItemType(userId, "career_year");
+            long careerYearNum;
+            if (careerYear.isEmpty()) {
+                careerYearNum = 0;
+            } else {
+                final String itemValue = careerYear.get(careerYear.size() - 1).getItemValue();
+                careerYearNum = Integer.parseInt(itemValue);
+            }
             List<Job_mst> allByCompanyCdInAndSubJobCdNmIn = jobRepositoryInterface.findJobsByDetailedCriteria(
                 companysStr,
                 jobStr,
-                2L, // 경력 시작일 (0L은 경력 무관)
+                careerYearNum, // 경력 시작일
                 0L  // 경력 종료일 (0L은 경력 무관)
             );
             log.info("userId: {}, companys: {}, jobs: {}, allByCompanyCdInAndSubJobCdNmIn: {}", userId, companys, jobs, allByCompanyCdInAndSubJobCdNmIn.size());
