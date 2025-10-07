@@ -1,5 +1,7 @@
 package com.nklcbdty.batch.nklcbdty.batch.crawler.repository;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,13 +34,22 @@ public class JobRepositoryInterfaceImpl extends QuerydslRepositorySupport implem
         Long personalHistoryEnd    // Long 타입
     ) {
         QJob_mst job_mst = QJob_mst.job_mst;
+        LocalDate todayDate = LocalDate.of(2025, 10, 7); // 실제 서비스에서는 LocalDate.now() 사용
+        String todayString = todayDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+            // 종료일(endDate)이 null이 아니면서, 오늘 날짜 이후인 조건만 유지합니다.
+        BooleanExpression endDateAfterToday = job_mst.endDate
+            .isNotNull()
+          .and(job_mst.endDate.goe(todayString));
+
 
         return queryFactory
                 .selectFrom(job_mst)
                 .where(
                     companyCdIn(companyCds),
                     subJobCdNmIn(subJobCdNms),
-                    personalHistoryRange(job_mst, personalHistoryStart, personalHistoryEnd) // Long 타입용 새 메소드
+                    personalHistoryRange(job_mst, personalHistoryStart, personalHistoryEnd), // Long 타입용 새 메소드
+                    endDateAfterToday
                 )
                 .orderBy(job_mst.endDate.desc())
                 .fetch();
