@@ -1,6 +1,7 @@
 package com.nklcbdty.batch.nklcbdty.batch.crawler.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.QJob_mst;
+import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -34,14 +37,6 @@ public class JobRepositoryInterfaceImpl extends QuerydslRepositorySupport implem
         Long personalHistoryEnd    // Long 타입
     ) {
         QJob_mst job_mst = QJob_mst.job_mst;
-        LocalDate todayDate = LocalDate.of(2025, 10, 7); // 실제 서비스에서는 LocalDate.now() 사용
-        String todayString = todayDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-            // 종료일(endDate)이 null이 아니면서, 오늘 날짜 이후인 조건만 유지합니다.
-        BooleanExpression endDateAfterToday = job_mst.endDate
-            .isNotNull()
-          .and(job_mst.endDate.goe(todayString));
-
 
         return queryFactory
                 .selectFrom(job_mst)
@@ -49,10 +44,26 @@ public class JobRepositoryInterfaceImpl extends QuerydslRepositorySupport implem
                     companyCdIn(companyCds),
                     subJobCdNmIn(subJobCdNms),
                     personalHistoryRange(job_mst, personalHistoryStart, personalHistoryEnd), // Long 타입용 새 메소드
-                    endDateAfterToday
+                    endDateAfterToday(job_mst)
                 )
                 .orderBy(job_mst.endDate.desc())
                 .fetch();
+    }
+
+    private BooleanExpression endDateAfterToday(QJob_mst job_mst) {
+        DateTimeExpression<LocalDateTime> jobEndDateAsDateTimeExpression = Expressions.dateTimeTemplate(
+            LocalDateTime.class,
+            "STR_TO_DATE({0}, {1})",
+            job_mst.endDate,
+            ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+        );
+        String todayString = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDateTime todayStart = LocalDate.parse(todayString).atStartOfDay();
+
+        return job_mst.endDate
+            .isNull()
+            .or(job_mst.endDate.eq("영입종료시"))
+            .or(jobEndDateAsDateTimeExpression.goe(todayStart));
     }
 
     private BooleanExpression companyCdIn(List<String> companyCds) {
