@@ -10,4 +10,6 @@ public interface JobRepositoryCustom {
         Long personalHistoryStart,
         Long personalHistoryEnd
     );
+
+    List<Job_mst> findActiveJobs();
 }

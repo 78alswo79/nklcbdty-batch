@@ -30,6 +30,32 @@ public class JobRepositoryInterfaceImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
+    public List<Job_mst> findActiveJobs() {
+        QJob_mst job_mst = QJob_mst.job_mst;
+
+        DateTimeExpression<LocalDateTime> jobEndDateAsDateTimeExpression = Expressions.dateTimeTemplate(
+            LocalDateTime.class,
+            "STR_TO_DATE({0}, {1})",
+            job_mst.endDate,
+            ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+        );
+        String todayString = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDateTime todayStart = LocalDate.parse(todayString).atStartOfDay();
+
+        return queryFactory
+                .selectFrom(job_mst)
+                .where(
+                    job_mst.jobDetailLink.isNotNull(),
+                    job_mst.annoSubject.isNotNull(),
+                    job_mst.endDate.isNull()
+                        .or(job_mst.endDate.eq("영입종료시"))
+                        .or(job_mst.endDate.eq("영업종료시"))
+                        .or(jobEndDateAsDateTimeExpression.goe(todayStart))
+                )
+                .fetch();
+    }
+
+    @Override
     public List<Job_mst> findJobsByDetailedCriteria(
         List<String> companyCds,
         List<String> subJobCdNms,
