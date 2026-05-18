@@ -33,7 +33,7 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final long MIN_INTERVAL_PER_DOMAIN_MS = 5_000L;
-    private static final String ERROR_END_DATE = "error";
+    private static final String ERROR_END_DATE = "2000-01-01 00:00";
 
     private final LinkValidatorReader linkValidatorReader;
 
