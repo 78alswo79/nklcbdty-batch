@@ -70,6 +70,11 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                 log.warn("⚠️ 응답 실패 (status={}): id={} url={}", response.code(), job.getId(), url);
                 return markAsError(job);
             }
+            String finalUrl = response.request().url().toString();
+            if (isInvalidatedUrl(url, finalUrl)) {
+                log.info("🚨 공고 종료 감지 (리다이렉트): id={} url={} → {}", job.getId(), url, finalUrl);
+                return markAsClosed(job);
+            }
             ResponseBody body = response.body();
             if (body == null) {
                 log.warn("⚠️ 응답 본문이 비어 있음. id={} url={}", job.getId(), url);
@@ -81,10 +86,7 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                 return null;
             }
             log.info("🚨 공고 종료 감지: id={} 공고명='{}'", job.getId(), annoSubject);
-            String yesterday = LocalDate.now().minusDays(1).atTime(23, 59, 59).format(FORMATTER);
-            job.setEndDate(yesterday);
-            job.setUpdateDts(LocalDateTime.now());
-            return job;
+            return markAsClosed(job);
         } catch (IOException e) {
             log.error("😭 페이지 조회 중 오류 발생 id={} url={} - {}", job.getId(), url, e.getMessage());
             return markAsError(job);
@@ -100,6 +102,20 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
         job.setEndDate(ERROR_END_DATE);
         job.setUpdateDts(LocalDateTime.now());
         return job;
+    }
+
+    private Job_mst markAsClosed(Job_mst job) {
+        String yesterday = LocalDate.now().minusDays(1).atTime(23, 59, 59).format(FORMATTER);
+        job.setEndDate(yesterday);
+        job.setUpdateDts(LocalDateTime.now());
+        return job;
+    }
+
+    private boolean isInvalidatedUrl(String originalUrl, String finalUrl) {
+        if (finalUrl == null || finalUrl.equals(originalUrl)) {
+            return false;
+        }
+        return finalUrl.contains("/invalid");
     }
 
     private void throttleByDomain(String url) throws InterruptedException {
