@@ -22,7 +22,7 @@ public class LinkValidatorBatchScheduler {
      * (크롤링 배치(7시) 완료 후, 이메일 배치(8시) 시작 전에 실행되도록 배치)
      * cron = "초 분 시 일 월 요일"
      */
-    @Scheduled(cron = "0 30 7 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 9 * * *", zone = "Asia/Seoul")
     public void runLinkValidatorJob() {
         try {
             log.info("⏰ 링크 유효성 검증 배치 실행 요청!");
