@@ -17,7 +17,7 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.BatchJobMstRepository;
-//import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobMstRepository;
+//import com.nklcbdty.common.crawler.repository.JobRepository;
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.service.HttpClientService;
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Batch_output_job_mst;
 //import com.nklcbdty.common.vo.Job_mst;
@@ -36,10 +36,10 @@
 //    public StepBuilderFactory stepBuilderFactory; // Step 빌더 팩토리 주입
 //    
 //    @Autowired
-//    private JobMstRepository jobMstRepository; // 데이터베이스 접근을 위한 리포지토리 주입
+//    private JobRepository jobMstRepository; // 데이터베이스 접근을 위한 리포지토리 주입
 //    
 //    @Autowired
-//    private BatchJobMstRepository batchJobMstRepository;
+//    private BatchJobMstRepository batchJobRepository;
 //      
 //    @Autowired
 //    private HttpClientService httpClientService;

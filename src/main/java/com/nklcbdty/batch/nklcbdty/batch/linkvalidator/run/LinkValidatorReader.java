@@ -7,7 +7,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
+import com.nklcbdty.common.crawler.repository.JobRepository;
 import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.Getter;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class LinkValidatorReader implements ItemReader<Job_mst> {
-    private final JobRepositoryInterface jobRepositoryInterface;
+    private final JobRepository jobRepositoryInterface;
     private Iterator<Job_mst> iterator;
     private boolean initialized = false;
 

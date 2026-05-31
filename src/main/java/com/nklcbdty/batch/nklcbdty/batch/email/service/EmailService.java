@@ -19,7 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
+import com.nklcbdty.common.crawler.repository.JobRepository;
 import com.nklcbdty.common.vo.Job_mst;
 import com.nklcbdty.common.dto.JobPosting;
 import com.nklcbdty.common.email.JobEmailContentBuilder;
@@ -39,7 +39,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final UserInterestRepository userInterestRepository;
     private final UserInterestRepositoryImpl userInterestRepositoryImpl;
-    private final JobRepositoryInterface jobRepositoryInterface;
+    private final JobRepository jobRepositoryInterface;
 
     public void sendEmail(String to, String subject, String body) {
         try {

@@ -5,7 +5,7 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
+import com.nklcbdty.common.crawler.repository.JobRepository;
 import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class LinkValidatorWriter implements ItemWriter<Job_mst> {
-    private final JobRepositoryInterface jobRepositoryInterface;
+    private final JobRepository jobRepositoryInterface;
 
     @Override
     public void write(Chunk<? extends Job_mst> items) {

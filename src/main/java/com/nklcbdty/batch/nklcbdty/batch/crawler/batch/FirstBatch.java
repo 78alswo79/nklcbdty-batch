@@ -31,7 +31,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.BatchJobMstRepository;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobMstRepository;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Batch_output_job_mst;
 import com.nklcbdty.common.vo.Job_mst;
 
@@ -46,16 +45,16 @@ public class FirstBatch {
 	private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final JobMstRepository jobMstRepository;
-    private final BatchJobMstRepository batchJobMstRepository;
-    
+    private final com.nklcbdty.common.crawler.repository.JobRepository jobMstRepository;
+    private final BatchJobMstRepository batchJobRepository;
+
 	public FirstBatch(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager,
-			JobMstRepository jobMstRepository, BatchJobMstRepository batchJobMstRepository) {
+			com.nklcbdty.common.crawler.repository.JobRepository jobMstRepository, BatchJobMstRepository batchJobRepository) {
 
 		this.jobRepository = jobRepository;
 		this.platformTransactionManager = platformTransactionManager;
 		this.jobMstRepository = jobMstRepository;
-		this.batchJobMstRepository = batchJobMstRepository;
+		this.batchJobRepository = batchJobRepository;
 	}
 	
 	// OkHttpClient 연결/리드/읽기 타임아웃 1분으로 지정.
@@ -178,7 +177,7 @@ public class FirstBatch {
 	            .name("beforeReader")
 	            .pageSize(10)
 	            .methodName("findAll")
-	            .repository(batchJobMstRepository)
+	            .repository(batchJobRepository)
 	            .sorts(Map.of("id", Sort.Direction.ASC))
 	            .build();
 	}
@@ -188,7 +187,7 @@ public class FirstBatch {
         return new ItemWriter<Batch_output_job_mst>() {
             @Override
             public void write(Chunk<? extends Batch_output_job_mst> chunk) throws Exception {
-                batchJobMstRepository.deleteAll();
+                batchJobRepository.deleteAll();
             }
         };
     }
@@ -257,7 +256,7 @@ public class FirstBatch {
     public RepositoryItemWriter<Batch_output_job_mst> afterWriter() {
 
         return new RepositoryItemWriterBuilder<Batch_output_job_mst>()
-                .repository(batchJobMstRepository)
+                .repository(batchJobRepository)
                 .methodName("save")
                 .build();
     }
