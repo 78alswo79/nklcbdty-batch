@@ -5,6 +5,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +35,12 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final long MIN_INTERVAL_PER_DOMAIN_MS = 5_000L;
     private static final String ERROR_END_DATE = "2000-01-01 00:00";
+
+    // 사이트별 공고 종료/삭제 안내 문구. content 에 이 중 하나라도 포함되면 종료로 간주.
+    private static final List<String> CLOSED_PAGE_MARKERS = List.of(
+        "요청한 페이지를 찾을 수 없습니다",  // 쿠팡 404
+        "지원서 접수가 중단되었습니다"        // 토스 종료
+    );
 
     private final LinkValidatorReader linkValidatorReader;
 
@@ -81,6 +88,12 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                 return markAsError(job);
             }
             String content = body.string();
+            for (String marker : CLOSED_PAGE_MARKERS) {
+                if (content.contains(marker)) {
+                    log.info("🚨 공고 종료 감지 (안내문구): id={} marker='{}'", job.getId(), marker);
+                    return markAsClosed(job);
+                }
+            }
             if (content.contains(annoSubject)) {
                 log.debug("✅ 공고 유효: id={}", job.getId());
                 return null;
