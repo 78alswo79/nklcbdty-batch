@@ -1,37 +1,15 @@
 package com.nklcbdty.batch.nklcbdty.batch.user.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import com.nklcbdty.common.user.dto.UserIdAndEmailDto;
-import com.nklcbdty.common.user.dto.UserResponseDto;
 import com.nklcbdty.common.user.repository.UserRepository;
-import com.nklcbdty.common.vo.UserVo;
+import com.nklcbdty.common.user.service.BaseUserService;
 
-import lombok.RequiredArgsConstructor;
-
+// batch 는 BaseUserService 의 조회 메서드만 필요. 추가 동작 없음.
 @Service
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public class UserService extends BaseUserService {
 
-    public UserResponseDto findByUserId(String userId) {
-        UserVo user = userRepository.findByUserId(userId);
-        return UserResponseDto.builder()
-            .username(user.getUsername())
-            .email(user.getEmail())
-            .build();
-    }
-
-    public List<UserIdAndEmailDto> findByUserIdIn(List<String> userIds) {
-        List<UserVo> items = userRepository.findByUserIdIn(userIds);
-        List<UserIdAndEmailDto> results = new ArrayList<>();
-        for (UserVo item : items) {
-            results.add(new UserIdAndEmailDto(item.getUserId(), item.getEmail()));
-        }
-
-        return results;
+    public UserService(UserRepository userRepository) {
+        super(userRepository);
     }
 }
