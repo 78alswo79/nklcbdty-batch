@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.nklcbdty.common.user.dto.UserIdAndEmailDto;
 import com.nklcbdty.common.user.dto.UserResponseDto;
-import com.nklcbdty.batch.nklcbdty.batch.user.repository.UserRepository;
+import com.nklcbdty.common.user.repository.UserRepository;
 import com.nklcbdty.common.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;

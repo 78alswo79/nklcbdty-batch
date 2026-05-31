@@ -24,8 +24,8 @@ import com.nklcbdty.common.vo.Job_mst;
 import com.nklcbdty.common.dto.JobPosting;
 import com.nklcbdty.common.email.JobEmailContentBuilder;
 import com.nklcbdty.common.user.dto.UserIdAndEmailDto;
-import com.nklcbdty.batch.nklcbdty.batch.user.repository.UserInterestRepository;
-import com.nklcbdty.batch.nklcbdty.batch.user.repository.UserInterestRepositoryImpl;
+import com.nklcbdty.common.user.repository.UserInterestRepository;
+import com.nklcbdty.common.user.repository.UserInterestRepositoryImpl;
 import com.nklcbdty.batch.nklcbdty.batch.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
