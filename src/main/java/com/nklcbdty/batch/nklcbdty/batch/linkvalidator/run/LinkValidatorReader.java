@@ -8,7 +8,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

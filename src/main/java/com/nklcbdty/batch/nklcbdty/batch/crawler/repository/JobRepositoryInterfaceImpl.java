@@ -9,8 +9,8 @@ import java.util.Objects;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.QJob_mst;
+import com.nklcbdty.common.vo.Job_mst;
+import com.nklcbdty.common.vo.QJob_mst;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.RequiredArgsConstructor;
 

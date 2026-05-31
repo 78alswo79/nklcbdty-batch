@@ -20,7 +20,7 @@
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobMstRepository;
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.service.HttpClientService;
 //import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Batch_output_job_mst;
-//import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+//import com.nklcbdty.common.vo.Job_mst;
 //
 //import lombok.RequiredArgsConstructor;
 //

@@ -22,7 +22,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+import com.nklcbdty.common.vo.Job_mst;
 import com.nklcbdty.batch.nklcbdty.batch.email.dto.JobPosting;
 import com.nklcbdty.batch.nklcbdty.batch.user.dto.UserIdAndEmailDto;
 import com.nklcbdty.batch.nklcbdty.batch.user.repository.UserInterestRepository;

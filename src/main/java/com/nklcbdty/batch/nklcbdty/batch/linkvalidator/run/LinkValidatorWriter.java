@@ -6,7 +6,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobRepositoryInterface;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -33,7 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.BatchJobMstRepository;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.repository.JobMstRepository;
 import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Batch_output_job_mst;
-import com.nklcbdty.batch.nklcbdty.batch.crawler.vo.Job_mst;
+import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
