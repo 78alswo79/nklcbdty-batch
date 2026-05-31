@@ -1,5 +1,5 @@
 package com.nklcbdty.batch.nklcbdty.batch.email.service;
-import static com.nklcbdty.batch.nklcbdty.batch.user.vo.QUserInterestVo.*;
+import static com.nklcbdty.common.vo.QUserInterestVo.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import jakarta.mail.SendFailedException;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.MimeMessage;
 
-import com.nklcbdty.batch.nklcbdty.batch.user.vo.UserInterestVo;
+import com.nklcbdty.common.vo.UserInterestVo;
 import com.querydsl.core.Tuple;
 
 import org.springframework.mail.javamail.JavaMailSender;

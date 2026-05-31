@@ -9,7 +9,7 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.nklcbdty.batch.nklcbdty.batch.user.vo.QUserInterestVo;
+import com.nklcbdty.common.vo.QUserInterestVo;
 
 import lombok.RequiredArgsConstructor;
 
