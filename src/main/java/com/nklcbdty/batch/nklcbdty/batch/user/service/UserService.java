@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.nklcbdty.batch.nklcbdty.batch.user.dto.UserIdAndEmailDto;
-import com.nklcbdty.batch.nklcbdty.batch.user.dto.UserResponseDto;
+import com.nklcbdty.common.user.dto.UserIdAndEmailDto;
+import com.nklcbdty.common.user.dto.UserResponseDto;
 import com.nklcbdty.batch.nklcbdty.batch.user.repository.UserRepository;
-import com.nklcbdty.batch.nklcbdty.batch.user.vo.UserVo;
+import com.nklcbdty.common.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
 
