@@ -41,7 +41,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.nklcbdty:nklcbdty-common:0.5.0'
+    implementation 'com.nklcbdty:nklcbdty-common:0.6.0'
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
