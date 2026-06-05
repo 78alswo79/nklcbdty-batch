@@ -1,10 +1,12 @@
 package com.nklcbdty.batch.nklcbdty.batch.email.service;
 import static com.nklcbdty.common.vo.QUserInterestVo.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.MessagingException;
@@ -23,6 +25,7 @@ import com.nklcbdty.common.crawler.repository.JobRepository;
 import com.nklcbdty.common.vo.Job_mst;
 import com.nklcbdty.common.dto.JobPosting;
 import com.nklcbdty.common.email.JobEmailContentBuilder;
+import com.nklcbdty.common.email.JobMailOrdering;
 import com.nklcbdty.common.user.dto.UserIdAndEmailDto;
 import com.nklcbdty.common.user.repository.UserInterestRepository;
 import com.nklcbdty.common.user.repository.UserInterestRepositoryImpl;
@@ -121,6 +124,12 @@ public class EmailService {
                 careerYearNum, // 경력 시작일
                 0L  // 경력 종료일 (0L은 경력 무관)
             );
+            // 수동 메일과 동일 정책: 종료된/손상 공고 제외 + 1년 초과(2999-12-31 등 무기한)는 뒤로
+            LocalDate today = LocalDate.now();
+            allByCompanyCdInAndSubJobCdNmIn = allByCompanyCdInAndSubJobCdNmIn.stream()
+                .filter(job -> JobMailOrdering.isLive(job, today))
+                .collect(Collectors.toList());
+            allByCompanyCdInAndSubJobCdNmIn = JobMailOrdering.pushFarFutureEndDateToBottom(allByCompanyCdInAndSubJobCdNmIn);
             log.info("userId: {}, companys: {}, jobs: {}, allByCompanyCdInAndSubJobCdNmIn: {}", userId, companys, jobs, allByCompanyCdInAndSubJobCdNmIn.size());
             List<JobPosting> jobPostings = new ArrayList<>();
             for (Job_mst job : allByCompanyCdInAndSubJobCdNmIn) {
