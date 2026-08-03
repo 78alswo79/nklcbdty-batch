@@ -129,6 +129,13 @@ public class EmailService {
             allByCompanyCdInAndSubJobCdNmIn = allByCompanyCdInAndSubJobCdNmIn.stream()
                 .filter(job -> JobMailOrdering.isLive(job, today))
                 .collect(Collectors.toList());
+            // job_mst 에 같은 공고가 여러 행으로 남아 있어도 메일에는 한 번만 싣는다.
+            final int beforeDedupe = allByCompanyCdInAndSubJobCdNmIn.size();
+            allByCompanyCdInAndSubJobCdNmIn = JobMailOrdering.dedupe(allByCompanyCdInAndSubJobCdNmIn);
+            if (beforeDedupe != allByCompanyCdInAndSubJobCdNmIn.size()) {
+                log.warn("중복 공고 {}건 제외 (userId={}, 원본={}건)",
+                    beforeDedupe - allByCompanyCdInAndSubJobCdNmIn.size(), userId, beforeDedupe);
+            }
             allByCompanyCdInAndSubJobCdNmIn = JobMailOrdering.pushFarFutureEndDateToBottom(allByCompanyCdInAndSubJobCdNmIn);
             log.info("userId: {}, companys: {}, jobs: {}, allByCompanyCdInAndSubJobCdNmIn: {}", userId, companys, jobs, allByCompanyCdInAndSubJobCdNmIn.size());
             List<JobPosting> jobPostings = new ArrayList<>();
