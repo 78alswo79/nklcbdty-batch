@@ -15,6 +15,8 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
+import com.nklcbdty.batch.nklcbdty.batch.linkvalidator.liveness.CompanyLivenessChecker;
+import com.nklcbdty.batch.nklcbdty.batch.linkvalidator.liveness.Liveness;
 import com.nklcbdty.common.vo.Job_mst;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,10 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
 
     private final LinkValidatorReader linkValidatorReader;
 
+    // 상세페이지가 SPA 라 HTML 매칭이 통하지 않는 회사용 대체 판정기(현재 배민).
+    // 해당 회사가 없으면 빈 리스트로 주입되어 기존 HTML 검증만 돈다.
+    private final List<CompanyLivenessChecker> livenessCheckers;
+
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
@@ -62,6 +68,26 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
         String annoSubject = job.getAnnoSubject();
         if (url == null || url.isEmpty() || annoSubject == null || annoSubject.isEmpty()) {
             log.warn("🚫 URL 또는 공고명이 비어 있어 검증을 건너뜁니다. id={}", job.getId());
+            return null;
+        }
+
+        // 상세페이지 HTML 에 공고명이 실리지 않는 회사(SPA)는 채용 API 로 먼저 판정한다.
+        // 여기서 판정이 끝나면 상세페이지는 아예 받지 않는다.
+        CompanyLivenessChecker checker = findChecker(job);
+        if (checker != null) {
+            Liveness liveness = checker.check(job);
+            if (liveness == Liveness.ALIVE) {
+                log.debug("✅ 공고 유효(API 판정): id={}", job.getId());
+                return null;
+            }
+            if (liveness == Liveness.CLOSED) {
+                log.info("🚨 공고 종료 감지(API 판정): id={} annoId={} 공고명='{}'",
+                    job.getId(), job.getAnnoId(), annoSubject);
+                return markAsClosed(job);
+            }
+            // UNKNOWN: 채용 API 가 죽었거나 응답이 바뀐 경우. 종료로 단정하면 그 회사 공고가
+            // 한 번에 전멸하므로 이번 회차는 손대지 않고 넘어간다.
+            log.warn("❔ 생존 판정 불가(API) — 이번 회차 건너뜀: id={} annoId={}", job.getId(), job.getAnnoId());
             return null;
         }
 
@@ -109,6 +135,16 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                 lastCallPerDomain.put(domain, System.currentTimeMillis());
             }
         }
+    }
+
+    private CompanyLivenessChecker findChecker(Job_mst job) {
+        if (livenessCheckers == null) {
+            return null;
+        }
+        return livenessCheckers.stream()
+            .filter(c -> c.supports(job))
+            .findFirst()
+            .orElse(null);
     }
 
     private Job_mst markAsError(Job_mst job) {
