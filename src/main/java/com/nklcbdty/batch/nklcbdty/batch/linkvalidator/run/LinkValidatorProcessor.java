@@ -46,7 +46,7 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
 
     private final LinkValidatorReader linkValidatorReader;
 
-    // 상세페이지가 SPA 라 HTML 매칭이 통하지 않는 회사용 대체 판정기(현재 배민).
+    // 상세페이지가 SPA 라 HTML 매칭이 통하지 않는 회사용 대체 판정기(배민, 카카오 영입).
     // 해당 회사가 없으면 빈 리스트로 주입되어 기존 HTML 검증만 돈다.
     private final List<CompanyLivenessChecker> livenessCheckers;
 
