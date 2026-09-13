@@ -42,13 +42,40 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+      # CloudType 은 `latest` 를 이미 받아둔 것으로 보고 새 이미지를 pull 하지 않는다.
+      # 2026-09-13 기준 운영 컨테이너는 2026-05 빌드였다 — actuator/scheduledtasks 의
+      # 링크검증 크론이 `0 30 7 * * *` 였고, 그 값은 b14f6ba~ba45e23 구간 코드에만 있다.
+      # 이미지는 8/27 에 올라가 있었으니 태그 이름이 안 바뀐 게 원인이다.
+      # 그래서 매 빌드마다 이름이 달라지는 커밋 SHA 태그를 함께 올린다. 처음 보는 태그는
+      # 캐시가 없으므로 CloudType 이 반드시 받아온다. `latest` 는 기존 참조용으로 유지.
+      - name: Resolve image tag
+        id: tag
+        run: echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
       - name: Build Docker image
         run: |
           docker build \
             --build-arg GITHUB_ACTOR=${{ github.actor }} \
             --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-            -t ejy1024/nklcbdty-batch:latest .
+            -t ejy1024/nklcbdty-batch:latest \
+            -t ejy1024/nklcbdty-batch:${{ steps.tag.outputs.sha }} .
 
       - name: Push Docker image
         run: |
+          docker push ejy1024/nklcbdty-batch:${{ steps.tag.outputs.sha }}
           docker push ejy1024/nklcbdty-batch:latest
+
+      # CloudType 콘솔에 넣을 태그를 Actions 요약에 남긴다.
+      # 이 태그로 바꿔야 재배포가 실제로 새 코드를 올린다.
+      - name: Write deploy hint
+        run: |
+          {
+            echo "### CloudType 에 넣을 이미지 태그"
+            echo
+            echo '```'
+            echo "ejy1024/nklcbdty-batch:${{ steps.tag.outputs.sha }}"
+            echo '```'
+            echo
+            echo "콘솔에서 이미지 태그를 위 값으로 바꾼 뒤 재배포하면 캐시를 우회해 새 코드가 뜬다."
+            echo "떠 있는 빌드는 \`/actuator/scheduledtasks\` 의 크론으로 확인할 수 있다."
+          } >> "$GITHUB_STEP_SUMMARY"
