@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.jsoup.parser.Parser;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
@@ -120,7 +121,7 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                     return markAsClosed(job);
                 }
             }
-            if (content.contains(annoSubject)) {
+            if (containsSubject(content, annoSubject)) {
                 log.debug("✅ 공고 유효: id={}", job.getId());
                 return null;
             }
@@ -135,6 +136,20 @@ public class LinkValidatorProcessor implements ItemProcessor<Job_mst, Job_mst> {
                 lastCallPerDomain.put(domain, System.currentTimeMillis());
             }
         }
+    }
+
+    /**
+     * 상세페이지 HTML 에 공고명이 들어 있는지.
+     *
+     * <p>원문 그대로 비교하면 공고명에 특수문자가 들어간 건이 전부 종료로 찍힌다. HTML 에서는
+     * {@code &} 가 {@code &amp;} 로 이스케이프돼 있어서다 — 카카오모빌리티 자율주행 공고
+     * ("... (R&D)", "물류 & 에이전트 ...")가 실제로 이 경우였다. 엔티티를 풀어 한 번 더 본다.</p>
+     */
+    boolean containsSubject(String content, String annoSubject) {
+        if (content.contains(annoSubject)) {
+            return true;
+        }
+        return Parser.unescapeEntities(content, false).contains(annoSubject);
     }
 
     private CompanyLivenessChecker findChecker(Job_mst job) {
